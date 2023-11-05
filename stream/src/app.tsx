@@ -3,30 +3,18 @@ import './app.css'
 
 export function App() {
   const [response, setResponse] = useState('')
-  const [sresponse, setSResponse] = useState('')
-  const api = 'http://localhost:5079/slow'
+  const [quantity, setQuantity] = useState(10)
+  const [error, setError] = useState('')
 
   var data: SlowPokeRequest = {
-    quantity: 10
+    quantity: quantity
   }
 
-  async function send(): Promise<void> {
-
-    setResponse('Posting with quantity ' + data.quantity)
-    var respone = await fetch(api, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-
-    var json = await respone.json()
-    setResponse(JSON.stringify(json))
-  }
-
-  async function sendwithstream(api:string): Promise<void> {
+  async function sendwithstream(api: string): Promise<void> {
     const decoder = new TextDecoder();
 
-    setSResponse('Posting with quantity ' + data.quantity)
+    setResponse('Posting with quantity ' + data.quantity)
+    setError('') // Clear any previous errors
     // Make the fetch request
     fetch(api, {
       method: 'POST',
@@ -43,11 +31,11 @@ export function App() {
         const reader = response.body!.getReader();
 
         // Function to read the streamed chunks
-        function read():any {
+        function read(): any {
           return reader.read().then(({ done, value }) => {
             // Check if the streaming is complete
             if (done) {
-              setSResponse('Streaming complete')
+              setResponse('Streaming complete')
               console.log('Streaming complete');
               return;
             }
@@ -55,7 +43,7 @@ export function App() {
             // Decode and process the streamed data
             const decodedData = decoder.decode(value, { stream: true });
             console.log(decodedData);
-            setSResponse('Streampart: ' + decodedData)
+            setResponse('Streampart: ' + decodedData)
 
             // Continue reading the next chunk
             return read();
@@ -68,20 +56,26 @@ export function App() {
       .catch(error => {
         // Handle errors
         console.log('Error:', error);
+        setError(error.message) // Set the error message state variable
       });
   }
 
   return (
     <>
       <h1>Strömtest</h1>
-      <div >
-        <button onClick={() => send()}>Send Data</button>
-        <p>{response}</p>
+      <div>
+        <label htmlFor="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" value={quantity}
+          onChange={(e: any) => setQuantity(parseInt(e.target.value))} />
       </div>
-      <div >
+      <div>
         <button onClick={() => sendwithstream('http://localhost:5079/slow')}>Send Data, Get stream</button>
-        <p>{sresponse}</p>
+        <p>{response}</p>
+        {error && <label style={{ color: 'red' }}>{error}</label>} 
       </div>
     </>
   )
 }
+
+
+
