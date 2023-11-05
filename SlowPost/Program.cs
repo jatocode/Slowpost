@@ -1,4 +1,6 @@
 
+using SlowPost;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 var app = builder.Build();
