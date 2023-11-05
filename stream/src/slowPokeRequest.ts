@@ -1,3 +1,3 @@
 interface SlowPokeRequest {
-    quantity: number;
+    message: string;
 }

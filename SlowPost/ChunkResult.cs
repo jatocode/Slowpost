@@ -7,16 +7,16 @@ public sealed class ChunkResult : IResult
     {
         context.Response.ContentType = "text/plain"; // Or "application/json"
 
-        var body = await context.Request.ReadFromJsonAsync<SlowPokeRequest>();
-        if (body is null)
+        var data = await context.Request.ReadFromJsonAsync<IEnumerable<SlowPokeRequest>>();
+        if (data is null)
         {
             return;
         }
-        for (int i = 0; i < body.Quantity; i++)
+        for (int i = 0; i < data.Count(); i++)
         {
             await Task.Delay(1000);
             Console.WriteLine($"Iteration {i}");
-            await context.Response.WriteAsync($"Iteration {i}");
+            await context.Response.WriteAsync($"Iteration {i}, message {data.ElementAt(i).Message}");
         }
     }
 }

@@ -1,5 +1,3 @@
-using System.Text;
-using SlowPost;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();

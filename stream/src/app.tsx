@@ -6,14 +6,21 @@ export function App() {
   const [quantity, setQuantity] = useState(10)
   const [error, setError] = useState('')
 
-  var data: SlowPokeRequest = {
-    quantity: quantity
+  function generateSlowPokeRequests(quantity: number): SlowPokeRequest[] {
+    const requests: SlowPokeRequest[] = [];
+    for (let i = 0; i < quantity; i++) {
+      requests.push({
+        message: `Dummydata ${i + 1}, ${new Date().toISOString()}`,
+      });
+    }
+    return requests;
   }
 
   async function sendwithstream(api: string): Promise<void> {
     const decoder = new TextDecoder();
 
-    setResponse('Posting with quantity ' + data.quantity)
+    const data = generateSlowPokeRequests(quantity)
+    setResponse('Posting with quantity ' + data.length)
     setError('') // Clear any previous errors
     // Make the fetch request
     fetch(api, {

@@ -1,2 +1,2 @@
 namespace SlowPost;
-record SlowPokeRequest(int Quantity);
+record SlowPokeRequest(string Message);
