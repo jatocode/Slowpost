@@ -10,7 +10,7 @@ export function App() {
     const requests: SlowPokeRequest[] = [];
     for (let i = 0; i < quantity; i++) {
       requests.push({
-        message: `Dummydata ${i + 1}, ${new Date().toISOString()}`,
+        message: `Dummydata ${i + 1}, ${Math.random() * 100}`,
       });
     }
     return requests;

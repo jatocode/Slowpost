@@ -1,3 +1,4 @@
+using System.Globalization;
 using SlowPost;
 public sealed class ChunkResult : IResult
 {
@@ -12,11 +13,13 @@ public sealed class ChunkResult : IResult
         {
             return;
         }
-        for (int i = 0; i < data.Count(); i++)
+        double total = 0;
+        foreach (var request in data)
         {
             await Task.Delay(1000);
-            Console.WriteLine($"Iteration {i}");
-            await context.Response.WriteAsync($"Iteration {i}, message {data.ElementAt(i).Message}");
+            Console.WriteLine($"Message {request.Message}");
+            total += Double.Parse(request.Message.Split(',')[1], CultureInfo.InvariantCulture);
+            await context.Response.WriteAsync($"Message {request.Message}, Total:{total}");
         }
     }
 }
