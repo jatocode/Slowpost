@@ -5,8 +5,9 @@ export function App() {
   const [response, setResponse] = useState('')
   const [sresponse, setSResponse] = useState('')
   const api = 'http://localhost:5079/slow'
+
   var data: SlowPokeRequest = {
-    quantity: 3
+    quantity: 10
   }
 
   async function send(): Promise<void> {
@@ -22,7 +23,7 @@ export function App() {
     setResponse(JSON.stringify(json))
   }
 
-  async function sendwithstream(): Promise<void> {
+  async function sendwithstream(api:string): Promise<void> {
     const decoder = new TextDecoder();
 
     setSResponse('Posting with quantity ' + data.quantity)
@@ -54,7 +55,7 @@ export function App() {
             // Decode and process the streamed data
             const decodedData = decoder.decode(value, { stream: true });
             console.log(decodedData);
-            setResponse('Streampart: ' + decodedData)
+            setSResponse('Streampart: ' + decodedData)
 
             // Continue reading the next chunk
             return read();
@@ -78,7 +79,7 @@ export function App() {
         <p>{response}</p>
       </div>
       <div >
-        <button onClick={() => sendwithstream()}>Send Data, Get stream</button>
+        <button onClick={() => sendwithstream('http://localhost:5079/slow')}>Send Data, Get stream</button>
         <p>{sresponse}</p>
       </div>
     </>
