@@ -16,7 +16,7 @@ export function App() {
     return requests;
   }
 
-  async function sendwithstream(api: string): Promise<void> {
+  async function sendwithstream(api: string, partialCallback: Function, completeCallback:Function): Promise<void> {
     const decoder = new TextDecoder();
 
     const data = generateSlowPokeRequests(quantity)
@@ -42,15 +42,13 @@ export function App() {
           return reader.read().then(({ done, value }) => {
             // Check if the streaming is complete
             if (done) {
-              setResponse('Streaming complete')
-              console.log('Streaming complete');
+              completeCallback('done: ')
               return;
             }
 
             // Decode and process the streamed data
             const decodedData = decoder.decode(value, { stream: true });
-            console.log(decodedData);
-            setResponse('Streampart: ' + decodedData)
+            partialCallback(decodedData)
 
             // Continue reading the next chunk
             return read();
@@ -67,6 +65,14 @@ export function App() {
       });
   }
 
+  function part(data: string) {
+    setResponse('Streampart: ' + data)
+  }
+
+  function done(data: string) {
+    setResponse('Streamdone: ' + data)
+  }
+
   return (
     <>
       <h1>Strömtest</h1>
@@ -76,7 +82,7 @@ export function App() {
           onChange={(e: any) => setQuantity(parseInt(e.target.value))} />
       </div>
       <div>
-        <button onClick={() => sendwithstream('http://localhost:5079/slow')}>Send Data, Get stream</button>
+        <button onClick={() => sendwithstream('http://localhost:5079/slow', part, done)}>Send Data, Get stream</button>
         <p>{response}</p>
         {error && <label style={{ color: 'red' }}>{error}</label>} 
       </div>
